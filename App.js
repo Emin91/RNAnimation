@@ -1,12 +1,27 @@
 import React, { Component } from 'react'
-import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native'
+import { StyleSheet, View, Text, Animated, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 
 class Animation extends Component {
   constructor() {
     super();
     this.state = {
       fadeValue: new Animated.Value(0),
+      animValue: new Animated.Value(1)
     };
+  }
+
+  pressIn = () => {
+    Animated.spring(this.state.animValue, {
+      toValue: 0.8,
+    }).start();
+  }
+
+  pressOut = () => {
+    Animated.spring(this.state.animValue, {
+      toValue: 1,
+      friction: 2,
+      tension: 90,
+    }).start();
   }
 
   fade = () => {
@@ -26,16 +41,29 @@ class Animation extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.btnOne} onPress={()=>this.start()}>
+
+        <TouchableOpacity style={styles.btnOne} onPress={() => this.start()}>
           <Text style={styles.btnOneText}>Click to show Button 2</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=> this.fade()}>
-          <Animated.View style={[styles.btnTwo, {opacity: this.state.fadeValue,}]}> 
+        <TouchableOpacity onPress={() => this.fade()}>
+          <Animated.View style={[styles.btnTwo, { opacity: this.state.fadeValue, }]}>
             <Text style={styles.btnTwoText}>Click to hide</Text>
           </Animated.View>
         </TouchableOpacity>
-      
+
+        <TouchableWithoutFeedback onPressIn={this.pressIn} onPressOut={this.pressOut}>
+          <Animated.View style={[styles.btnPressMe, {
+            transform: [
+              {
+                scale: this.state.animValue
+              }
+            ]
+          }
+          ]}>
+            <Text style={styles.btnTwoText}>Press me</Text>
+          </Animated.View>
+        </TouchableWithoutFeedback>
       </View>
     )
   }
@@ -81,8 +109,13 @@ const styles = StyleSheet.create({
   btnPressMe: {
     width: 250,
     height: 80,
-    backgroundColor: '#fff',
-    
+    borderRadius: 9,
+    borderWidth: 4,
+    borderColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#8e44ad',
+
   }
 })
 
